@@ -5,7 +5,7 @@ import numpy as np
 import sys
 import operator
 
-from python.algorithm import Algorithm, CountTime
+from algorithm import Algorithm, CountTime
 
 
 class SortTest(Algorithm):
@@ -41,7 +41,13 @@ class SortTest(Algorithm):
         return self.result_data
 
     def get_algorithm_level(self):
-        pass
+        for i in range(1, self.MAX_LEVEL + 1):
+            score = self.test_level(level=i)
+            if score == 0:
+                self.finish()
+                break
+            self.reckon_test()
+        self.print_result()
 
     def test_level(self, level=1):
         value = self.algorithm_standard_cfg[level]
@@ -86,3 +92,26 @@ class SortTest(Algorithm):
         else:
             return 3
 
+    def reckon_test(self):
+        self.level += 1
+        self.data_percent = round(float(self.total_score / self.max_score), 2)
+        self.time_percent = round(float(self.time_score / self.max_score), 2)
+        self.space_percent = round(float(self.space_score / self.max_score), 2)
+
+    def print_result(self):
+        print(">>>>>>>>> algorithm result <<<<<<<<<")
+        print("total time: ", self.total_time)
+        print("total space: ", self.total_space)
+        print("algorithm right percent: ", self.data_percent)
+        print("time percent: ", self.time_percent)
+        print("space percent: ", self.space_percent)
+        print("*** result, you algorithm level: %s ***" % self.level)
+        print(">>>>>>>>>>>>>>>> end <<<<<<<<<<<<<<<<")
+
+
+def test(data):
+    return sorted(data)
+
+
+if __name__ == '__main__':
+    pass

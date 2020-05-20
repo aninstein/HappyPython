@@ -11,12 +11,12 @@ class CountTime(object):
         pass
 
     def __call__(self, func):
-        def inner(self, *args):
-            start_time = datetime.datetime.now()
-            func()
-            over_time = datetime.datetime.now()
-            self.total_time = (over_time - start_time).total_seconds()
-            return self.total_time
+        def inner(foo_self, *args):
+            foo_self.start_time = datetime.datetime.now()
+            func_res = func(foo_self, *args)
+            foo_self.end_time = datetime.datetime.now()
+            foo_self.total_time = (foo_self.over_time - foo_self.start_time).total_seconds()
+            return func_res
         return inner
 
 
@@ -26,22 +26,27 @@ class Algorithm(object):
     def __init__(self, func):
         self.func = func
 
-        self.algorithm_standard_cfg = None
+        self.algorithm_standard_cfg = None       # 算法标准设置
 
         self.start_time = time.time()
         self.end_time = 0
-        self.total_time = 0
-        self.total_space = 0
+        self.total_time = 0                      # 总时间
+        self.total_space = 0                     # 总空间
 
-        self.test_data = None
-        self.result_data = None
-        self.answer_data = None
+        self.test_data = None                    # 测试数据
+        self.result_data = None                  # 运算结果
+        self.answer_data = None                  # 准确答案
 
-        self.data_score = 0
-        self.time_score = 0
-        self.space_score = 0
-        self.total_score = 0
+        self.data_score = 0                      # 运算数据得分
+        self.time_score = 0                      # 运算时间得分
+        self.space_score = 0                     # 运算空间得分
+        self.total_score = 0                     # 总分
         self.max_score = 0
+
+        self.data_percent = 0                    # 数据正确比例
+        self.time_percent = 0                    # 时间正确比例
+        self.space_percent = 0                   # 空间正确比例
+        self.level = 0                           # 代码级别
 
     def get_data_source(self, *args, **kwargs):
         """

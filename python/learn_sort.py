@@ -6,7 +6,7 @@ import sys
 import operator
 
 from algorithm import Algorithm, CountTime
-from sort_algorithm.sort_function import bubble_sort, select_sort, insert_sort
+from sort_algorithm.sort_function import bubble_sort, select_sort, insert_sort, gnome_sort
 from copy import deepcopy
 
 
@@ -134,6 +134,6 @@ def sort_test_function(data):
 
 
 if __name__ == '__main__':
-    ll = SortAlgorithm(bubble_sort)
+    ll = SortAlgorithm(select_sort)
     ll.get_algorithm_level()
 

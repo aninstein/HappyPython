@@ -15,13 +15,13 @@ class CountTime(object):
             foo_self.start_time = datetime.datetime.now()
             func_res = func(foo_self, *args)
             foo_self.end_time = datetime.datetime.now()
-            foo_self.total_time = (foo_self.over_time - foo_self.start_time).total_seconds()
+            foo_self.total_time = (foo_self.end_time - foo_self.start_time).total_seconds()
             return func_res
         return inner
 
 
 class Algorithm(object):
-    MAX_LEVEL = 20
+    MAX_LEVEL = 9
 
     def __init__(self, func):
         self.func = func
@@ -30,6 +30,8 @@ class Algorithm(object):
 
         self.start_time = time.time()
         self.end_time = 0
+        self.answer_algorithm_time = 0           # 用标准算法用时
+        self.answer_algorithm_space = 0          # 用标准算法用空间
         self.total_time = 0                      # 总时间
         self.total_space = 0                     # 总空间
 
@@ -41,7 +43,10 @@ class Algorithm(object):
         self.time_score = 0                      # 运算时间得分
         self.space_score = 0                     # 运算空间得分
         self.total_score = 0                     # 总分
-        self.max_score = 0
+
+        self.max_score = 0                       # 满分
+        self.time_max_score = 0                  # 时间满分
+        self.space_max_score = 0                 # 空间满分
 
         self.data_percent = 0                    # 数据正确比例
         self.time_percent = 0                    # 时间正确比例

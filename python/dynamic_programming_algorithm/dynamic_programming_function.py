@@ -14,14 +14,15 @@ def bag_0and1(data):
     :param data:
     :return:
     """
-    things_number = 10
-    data = create_random_bag_data(things_number)
-    print(data)
-    total_weight = data.get("total_weight")
-    items = data.get("items")
-    number = data.get("things_num")
-    max_value = _one_dim_function(items, number, total_weight)
-    print(max_value)
+    # things_number = 10
+    # data = create_random_bag_data(things_number)
+    # print(data)
+    # total_weight = data.get("total_weight")
+    # items = data.get("items")
+    # number = data.get("things_num")
+    # max_value = _one_dim_function(items, number, total_weight)
+    # print(max_value)
+    pass
 
 
 def _one_dim_function(data, number, total_weight):
@@ -81,28 +82,6 @@ def bag_multiple(data):
     :return:
     """
     pass
-
-
-def create_random_bag_data(things_num, bag_type="01"):
-    items = []
-    for i in range(things_num):
-        if bag_type == "multiple":
-            number = random.randint(1, 50)
-        elif bag_type == "complete":
-            number = 999999
-        else:
-            number = 1
-        items.append({
-            "number": number,
-            "weight": random.randint(1, 100),
-            "value": random.randint(1, 1000)
-        })
-    total_weight = random.randint(150, 350)
-    return {
-        "items": items,
-        "total_weight": total_weight,
-        "things_num": things_num
-    }
 
 
 if __name__ == '__main__':

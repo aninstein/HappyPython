@@ -4,6 +4,7 @@
 import numpy as np
 import sys
 import operator
+import random
 
 from algorithm import Algorithm, CountTime
 from copy import deepcopy
@@ -14,11 +15,12 @@ class DynamicProgramming(Algorithm):
     def __init__(self, func):
         super(DynamicProgramming, self).__init__(func)
         self.temp_test_data = None
+        self.is_random = True
 
-    def get_data_source(self, low=1, high=10, data_len=10):
-        self.test_data = np.random.randint(low, high, size=data_len)
-        self.test_data = list(self.test_data)
-        self.get_real_answer_data()
+    def get_data_source(self, **kwargs):
+        things_num = kwargs.get("things_num", 10)
+        bag_type = kwargs.get("bag_type", "01")
+        self.test_data = create_random_bag_data(things_num, bag_type, self.is_random)
         return self.test_data
 
     @CountTime()
@@ -44,9 +46,8 @@ class DynamicProgramming(Algorithm):
 
     def test_level(self, level=1):
         value = self.algorithm_standard_cfg[level]
-        self.get_data_source(low=value.get("low"),
-                             high=value.get("high"),
-                             data_len=value.get("data_len"))
+        self.get_data_source(things_num=value.get("things_num"),
+                             bag_type=value.get("bag_type"))
 
         self.temp_test_data = deepcopy(self.test_data)
         self.exec_algorithm()
@@ -109,6 +110,31 @@ class DynamicProgramming(Algorithm):
         print("*** space right percent: {0}%".format(self.space_percent * 100))
         print("*** result, you algorithm level: %s ***" % self.level)
         print(">>>>>>>>>>>>>>>> end <<<<<<<<<<<<<<<<")
+
+
+def create_random_bag_data(things_num, bag_type="01", is_random=True):
+    if not is_random:
+        return {}
+
+    items = []
+    for i in range(things_num):
+        if bag_type == "multiple":
+            number = random.randint(1, 50)
+        elif bag_type == "complete":
+            number = 999999
+        else:
+            number = 1
+        items.append({
+            "number": number,
+            "weight": random.randint(1, 100),
+            "value": random.randint(1, 1000)
+        })
+    total_weight = random.randint(150, 350)
+    return {
+        "items": items,
+        "total_weight": total_weight,
+        "things_num": things_num
+    }
 
 
 if __name__ == '__main__':

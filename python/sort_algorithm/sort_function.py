@@ -93,9 +93,22 @@ def insert_sort(data):
     return data
 
 
+def double_insert_sort(data):
+    """
+    双向插入排序
+    :param data:
+    :return:
+    """
+    if not data:
+        return []
+
+
 def shell_sort(data):
     """
     希尔排序，插入排序改进版本
+    1. 把队列等分字序列先做直接插入
+    2. 缩小等分步长做直接插入
+    3. 等分步长为1时候停止
     :param data:
     :return:
     """
@@ -115,7 +128,7 @@ def fast_sort(data):
 
 def merge_sort(data):
     """
-    希尔排序
+    归并排序
     :param data:
     :return:
     """
@@ -125,7 +138,7 @@ def merge_sort(data):
 
 def heap_sort(data):
     """
-    希尔排序
+    堆排序
     :param data:
     :return:
     """

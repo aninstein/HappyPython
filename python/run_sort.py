@@ -6,7 +6,7 @@ import sys
 import operator
 
 from algorithm import Algorithm, CountTime
-from sort_algorithm.sort_function import bubble_sort, select_sort, insert_sort, gnome_sort
+from algorithm_sort.function_sort import bubble_sort, select_sort, insert_sort, gnome_sort
 from copy import deepcopy
 
 

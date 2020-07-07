@@ -93,20 +93,10 @@ def insert_sort(data):
     return data
 
 
-def double_insert_sort(data):
-    """
-    双向插入排序
-    :param data:
-    :return:
-    """
-    if not data:
-        return []
-
-
 def shell_sort(data):
     """
     希尔排序，插入排序改进版本
-    1. 把队列等分字序列先做直接插入
+    1. 把队列按照步长，分序列先做直接插入
     2. 缩小等分步长做直接插入
     3. 等分步长为1时候停止
     :param data:
@@ -114,6 +104,19 @@ def shell_sort(data):
     """
     if not data:
         return []
+    data_len = len(data)
+    ll = data_len-1
+    step = int(ll // 2)
+    while step >= 1:
+        for i in range(step, data_len):
+            temp = data[i]
+            j = i - step
+            while j >= 0 and data[j] > temp:
+                data[j + step] = data[j]
+                j -= step
+            data[j+step] = temp
+        step //= 2
+    return data
 
 
 def fast_sort(data):
@@ -148,4 +151,5 @@ def heap_sort(data):
 
 if __name__ == '__main__':
     ll = [5, 6, 4, 1, 5, 7, 8, 9, 2, 3]
-    print(gnome_sort(ll))
+    print(shell_sort(ll))
+

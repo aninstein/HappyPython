@@ -121,7 +121,42 @@ def shell_sort(data):
 
 def fast_sort(data):
     """
-    快速排序
+    快速排序，创建新列表存放左边和右边
+    1. 分治法的思维
+    2. 选择当前序列一个主元，最好是中位数
+    3. 比主元大的放在左边
+    4. 比主元大的放在中间
+    5. 与主元相同的放在中间
+    6. 对左边和右边进行2~5的操作
+    7. 当队列长度小于2的时候退出
+    :param data:
+    :return:
+    """
+    if not data:
+        return []
+
+    data_len = len(data)
+    if data_len < 2:
+        return data
+
+    index = int((data_len+1) // 2)
+
+    right = []
+    left = []
+    same = []
+    for i in data:
+        if i > data[index]:
+            right.append(i)
+        elif i < data[index]:
+            left.append(i)
+        else:
+            same.append(i)
+    return fast_sort(left) + same + fast_sort(right)
+
+
+def merge_sort_iteration(data):
+    """
+    归并排序，迭代法
     :param data:
     :return:
     """
@@ -129,9 +164,9 @@ def fast_sort(data):
         return []
 
 
-def merge_sort(data):
+def merge_sort_recursion(data):
     """
-    归并排序
+    归并排序，递归法
     :param data:
     :return:
     """
@@ -151,5 +186,5 @@ def heap_sort(data):
 
 if __name__ == '__main__':
     ll = [5, 6, 4, 1, 5, 7, 8, 9, 2, 3]
-    print(shell_sort(ll))
+    print(fast_sort(ll))
 

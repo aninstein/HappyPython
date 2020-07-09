@@ -154,14 +154,23 @@ def fast_sort(data):
     return fast_sort(left) + same + fast_sort(right)
 
 
-def merge_sort_iteration(data):
-    """
-    归并排序，迭代法
-    :param data:
-    :return:
-    """
-    if not data:
-        return []
+def merge(left_data, right_data):
+    ret_data = []
+    left, right = 0, 0
+
+    # 有可能left_data与right_data长度不一致，因此只排序到有序的位置，因此用“and”
+    while left < len(left_data) and right < len(right_data):
+        if left_data[left] < right_data[right]:
+            ret_data.append(left_data[left])
+            left += 1
+        else:
+            ret_data.append(right_data[right])
+            right += 1
+
+    # 经过上面的排序之后left和right后面的数据变得是有序的，且左边一定大于右边
+    ret_data += left_data[left:]
+    ret_data += right_data[right:]
+    return ret_data
 
 
 def merge_sort_recursion(data):
@@ -172,6 +181,27 @@ def merge_sort_recursion(data):
     """
     if not data:
         return []
+
+    if len(data) <= 1:
+        return data
+
+    half = len(data) // 2
+    left_data = merge_sort_recursion(data[:half])
+    right_data = merge_sort_recursion(data[half:])
+    return merge(left_data, right_data)
+
+
+def merge_sort_iteration(data):
+    """
+    归并排序，迭代法
+    :param data:
+    :return:
+    """
+    if not data:
+        return []
+    i = 1
+    while i < len(data):
+        pass
 
 
 def heap_sort(data):
@@ -186,5 +216,5 @@ def heap_sort(data):
 
 if __name__ == '__main__':
     ll = [5, 6, 4, 1, 5, 7, 8, 9, 2, 3]
-    print(fast_sort(ll))
+    print(merge_sort_recursion(ll))
 

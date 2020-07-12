@@ -1,7 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# 排序算法
+---
 
-
+---
+## 1. 地精排序
+地精排序虽然只有一层循环，但是由于序列内部元素不断的交换比对，时间复杂度依旧是O(n^2)
+请直接看代码
+```python
 def gnome_sort(data):
     """
     地精排序
@@ -27,8 +31,10 @@ def gnome_sort(data):
             i += 1
 
     return data
-
-
+```
+## 2. 冒泡排序
+请直接看代码
+```python
 def bubble_sort(data):
     """
     冒泡排序
@@ -46,8 +52,10 @@ def bubble_sort(data):
                 data[i] = data[j]
                 data[j] = tmp
     return list(data)
-
-
+```
+## 3. 选择排序
+请直接看代码
+```python
 def select_sort(data):
     """
     选择排序
@@ -69,8 +77,10 @@ def select_sort(data):
             data[i] = data[min_flag]
             data[min_flag] = tmp
     return data
-
-
+```
+## 4. 插入排序
+请直接看代码
+```python
 def insert_sort(data):
     """
     直接插入排序
@@ -91,14 +101,18 @@ def insert_sort(data):
                     data[j] = tmp
                     break
     return data
+```
+## 5. 希尔排序
+希尔排序，插入排序改进版本，分组进行的插入排序
+-    1. 把队列按照步长，分序列先做直接插入
+-    2. 缩小等分步长做直接插入
+-    3. 等分步长为1时候停止
 
-
+请直接看代码：
+```python
 def shell_sort(data):
     """
     希尔排序，插入排序改进版本
-    1. 把队列按照步长，分序列先做直接插入
-    2. 缩小等分步长做直接插入
-    3. 等分步长为1时候停止
     :param data:
     :return:
     """
@@ -117,18 +131,22 @@ def shell_sort(data):
             data[j+step] = temp
         step //= 2
     return data
+```
+## 6. 快速排序
+快速排序，创建新列表存放左边和右边
+-    1. 分治法的思维
+-    2. 选择当前序列一个主元，最好是中位数
+-    3. 比主元大的放在左边
+-    4. 比主元大的放在中间
+-    5. 与主元相同的放在中间
+-    6. 对左边和右边进行2~5的操作
+-    7. 当队列长度小于2的时候退出
 
-
+请直接看代码：
+```python
 def fast_sort(data):
-    """
-    快速排序，创建新列表存放左边和右边
-    1. 分治法的思维
-    2. 选择当前序列一个主元，最好是中位数
-    3. 比主元大的放在左边
-    4. 比主元大的放在中间
-    5. 与主元相同的放在中间
-    6. 对左边和右边进行2~5的操作
-    7. 当队列长度小于2的时候退出
+    """*
+    快速排序
     :param data:
     :return:
     """
@@ -152,27 +170,38 @@ def fast_sort(data):
         else:
             same.append(i)
     return fast_sort(left) + same + fast_sort(right)
+```
 
-
-def merge(left_data, right_data):
-    left_index, right_index = 0, 0
-
-    # 有可能left_data与right_data长度不一致，因此只排序到有序的位置，因此用“and”
-    merge_list = []
-    while left_index < len(left_data) and right_index < len(right_data):  # 这个条件里面限定了，当较短的序列结束排序即结束循环
-        if left_data[left_index] < right_data[right_index]:
-            merge_list.append(left_data[left_index])
-            left_index += 1
-        else:
-            merge_list.append(right_data[right_index])
-            right_index += 1
-
-    # 经过上面的排序之后left和right后面的数据变得是有序的，且左边一定大于右边
-    merge_list.extend(left_data[left_index:])
-    merge_list.extend(right_data[right_index:])
-    return merge_list
-
-
+## 7. 归并排序
+### （1）归并算法
+首先需要明白归并算法，当我们有两个有序序列，arr1与arr2：
+```python
+arr1 = [1, 2, 4, 7]
+arr2 = [2, 2, 3, 5, 9]
+```
+因为是有序数列，所以我们实际上只需要把某一个序列合入到另一个序列中即可，定义两个下标变量：
+```python
+left_index, right_index = 0, 0
+```
+我们一般把长度短的序列合并到长度长的序列中，因此需要把arr1合并到arr2中，定义一个新序列存放合并后的结果
+```python
+merge_list = []
+while left_index < len(left_data) and right_index < len(right_data):  # 这个条件里面限定了，当较短的序列结束排序即结束循环
+	if left_data[left_index] < right_data[right_index]:
+		merge_list.append(left_data[left_index])
+		left_index += 1
+	else:
+		merge_list.append(right_data[right_index])
+		right_index += 1
+```
+由于我们创建了一个新队列去存合并后的数据，又因为我们只进行了短的队列向长的队列的合并，因此需要把长队列剩余部分的内容，合并到新的队列去
+```
+merge_list.extend(left_data[left_index:])
+merge_list.extend(right_data[right_index:])
+```
+### （2）归并排序
+有了上面归并算法的支持，进行归并排序的时候主要是把当前序列先划分为小的子序列，然后对子序列进行归并，归并后的子序列再进行归并，直到全部序列有序
+```python
 def merge_sort_recursion(data):
     """
     归并排序，递归法
@@ -188,75 +217,10 @@ def merge_sort_recursion(data):
     half = len(data) // 2
     left_data = merge_sort_recursion(data[:half])
     right_data = merge_sort_recursion(data[half:])
-    return merge(left_data, right_data)
+    return merge(left_data, right_data) 
+```
 
 
-def merge_sort_iteration(data):
-    """
-    归并排序，迭代法
-    与归并法不同，迭代法直接截取不同步长的子序列进行排序
-    :param data:
-    :return:
-    """
-    if not data:
-        return []
-
-
-def heap_sort(data):
-    """
-    堆排序
-    :param data:
-    :return:
-    """
-    if not data:
-        return []
-    i = 0
-    ret_data = []
-    heap_data = data[i:]
-    while i < len(data):
-        heap_data = heap_data[i:]
-        heap_data = make_heap(heap_data)
-        ret_data.append(heap_data[0])
-        i += 1
-    return ret_data
-
-
-def make_heap(data):
-    if len(data) == 1:
-        return data
-    elif len(data) == 2:
-        return [min(data), max(data)]
-    elif len(data) == 3:
-        min_data = min(data)
-        data.remove(min_data)
-        data = [min_data] + data
-
-    n = len(data)
-    for i in range(n // 2 - 1, -1, -1):
-        min_adjust_heap_down(data, i)
-    return data
-
-
-def min_adjust_heap_down(data, index):
-    """fix down in place from node i"""
-    n = len(data)
-    temp = data[index]
-    # j is the left child node
-    j = 2 * index + 1
-    while j < n:
-        if j+1 < n and data[j + 1] < data[j]:
-            j += 1
-        if data[j] > temp:
-            break
-        data[index] = data[j]
-        index = j
-        j = 2 * index + 1
-    data[index] = temp
-
-
-if __name__ == '__main__':
-    ll = [5, 6, 4, 1, 5, 7, 8, 9, 2, 3]
-    # make_heap(ll)
-    print(ll)
-    print(heap_sort(ll))
-
+## 8. 堆排序
+## 9. 基数排序
+## 10. 桶排序

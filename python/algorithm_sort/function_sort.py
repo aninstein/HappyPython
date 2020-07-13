@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 
+from algorithm_tree.learn_heap_on_tree import make_heap
+
+
 def gnome_sort(data):
     """
     地精排序
@@ -210,53 +213,18 @@ def heap_sort(data):
     """
     if not data:
         return []
-    i = 0
     ret_data = []
-    heap_data = data[i:]
-    while i < len(data):
-        heap_data = heap_data[i:]
+    heap_data = data[:]
+    while True:
         heap_data = make_heap(heap_data)
         ret_data.append(heap_data[0])
-        i += 1
+        if len(heap_data) == 1:
+            break
+        heap_data = heap_data[1:]
     return ret_data
 
 
-def make_heap(data):
-    if len(data) == 1:
-        return data
-    elif len(data) == 2:
-        return [min(data), max(data)]
-    elif len(data) == 3:
-        min_data = min(data)
-        data.remove(min_data)
-        data = [min_data] + data
-
-    n = len(data)
-    for i in range(n // 2 - 1, -1, -1):
-        min_adjust_heap_down(data, i)
-    return data
-
-
-def min_adjust_heap_down(data, index):
-    """fix down in place from node i"""
-    n = len(data)
-    temp = data[index]
-    # j is the left child node
-    j = 2 * index + 1
-    while j < n:
-        if j+1 < n and data[j + 1] < data[j]:
-            j += 1
-        if data[j] > temp:
-            break
-        data[index] = data[j]
-        index = j
-        j = 2 * index + 1
-    data[index] = temp
-
-
 if __name__ == '__main__':
-    ll = [5, 6, 4, 1, 5, 7, 8, 9, 2, 3]
-    # make_heap(ll)
+    ll = [6, 1, 5, 9, 9, 7, 2, 3, 5, 4, 1, 5, 3]
     print(ll)
     print(heap_sort(ll))
-

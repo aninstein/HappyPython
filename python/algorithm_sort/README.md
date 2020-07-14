@@ -222,5 +222,68 @@ def merge_sort_recursion(data):
 
 
 ## 8. 堆排序
-## 9. 基数排序
-## 10. 桶排序
+### （1）堆
+1. 一般都用数组来表示堆
+2. i结点的父结点下标就为(i–1)/2
+3. 它的左右子结点下标分别为
+    - 左孩子2∗i+1
+    - 右孩子2∗i+2
+    - 如第0个结点左右子结点下标分别为1和2
+4. 由此可得，如果向上追溯父节点，当节点i的父节点则为：
+    - parent = is_int{(child-1) / 2, (child-2) / 2}  
+### （2）堆化
+由于我们一般用数组存储堆，因此我们先对无序数组进行堆化，堆化两种写法，而且都是自顶向下才能完全的堆化
+#### 方法1
+```python
+def heapify(arr):
+    n = len(arr)
+    for i in reversed(range(n // 2)):
+        shiftDown(arr,n,i)
+
+def shiftDown(arr, n, k):
+    while 2 * k + 1 < n:
+        j = 2 * k + 1
+        if j + 1 < n and arr[j + 1] < arr[j]:
+            j += 1
+        if arr[k] <= arr[j]:
+            break
+        arr[k], arr[j] = arr[j], arr[k]
+        k = j
+```
+
+#### 方法2
+```python
+def shiftDown2(arr, n, k):
+    smallest, l, r = k, 2 * k + 1, 2 * k + 2
+    while l < n:
+        if arr[l] < arr[smallest]:
+            smallest = l
+        if r < n and arr[r] < arr[smallest]:
+            smallest = r
+        if smallest == k:
+            break
+        else:
+            arr[k], arr[smallest] = arr[smallest], arr[k]
+            k = smallest
+            l, r = 2 * k + 1, 2 * k + 2
+```
+
+### （3）堆排序
+使用堆化方法进行排序
+1. 我们每一次堆化都能够得到当前的最大值
+2. 这时候用这个最大值存放到新的队列，或者与队列的末尾元素进行交换
+3. 剩下的数据继续的进行对花
+```python
+def heapSort(arr):
+    n=len(arr)
+    heapify(arr)
+    print("堆化：",arr)
+    for i in range(n-1):
+        arr[n-i-1],arr[0] = arr[0],arr[n-i-1]
+        # print("交换最小值后：",arr)
+        shiftDown(arr,n-i-1,0)
+        # print("调整后：",arr)
+```
+## 9. 计数排序
+## 10. 基数排序
+## 11. 桶排序

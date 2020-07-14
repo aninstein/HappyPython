@@ -4,6 +4,22 @@
 import math
 
 
+class Node(object):
+    def __init__(self, value=0, left=None, right=None):
+        self.index = 0
+        self.value = value
+        self.left = left
+        self.right = right
+
+    def set_left(self, node):
+        node.index = 2 * self.index + 1
+        self.left = node
+
+    def set_right(self, node):
+        node.index = 2 * self.index + 2
+        self.right = node
+
+
 def get_full_num_by_layer(layer):
     """
     高度为n的满二叉树，节点数量：
@@ -65,3 +81,28 @@ def check_node_is_leaf_by_node_index(node_num, index):
     full_num = get_full_num_by_layer(layer - 1)
     first_leaf_index = full_num
     return False if index < first_leaf_index else True
+
+
+def print_tree(data):
+    i = 0
+    step = 0
+    data_len = len(data)
+    print_data = data[:]
+    tree = {}
+    while step < data_len:
+        step = 2 ** i
+        layer_data = print_data[:step]
+        if layer_data:
+            tree[i] = layer_data
+        print_data = print_data[step:]
+        i += 1
+    return tree
+
+
+if __name__ == '__main__':
+    ll = [1, 3, 5, 5, 1, 7, 5, 8, 6, 4, 7, 3, 8, 9, 5, 6, 3, 4, 2]
+    print("len", len(ll))
+    print(print_tree(ll))
+
+
+

@@ -273,7 +273,7 @@ def radix_sort(data):
         minus_base_map[i] = []
         num_base_map[i+10] = []
 
-    base_num = 10  # 从10位开始进行除法
+    base_num = 1  # 从10位开始进行除法
     valid_data = data[:]
     ret_data = []
     while valid_data:
@@ -295,7 +295,7 @@ def radix_sort(data):
         ret_data = []
         for i in range(20):
             if i < 10:
-                ret_data.extend(tmp_minus_map[-1 * i])
+                ret_data.extend(tmp_minus_map[i])
             else:
                 ret_data.extend(tmp_num_map[i])
     return ret_data

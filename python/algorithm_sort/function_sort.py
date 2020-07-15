@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import copy
 
 from algorithm_tree.learn_heap_on_tree import make_heap
 
@@ -224,7 +225,92 @@ def heap_sort(data):
     return ret_data
 
 
+def count_sort(data, count_start=0, count_end=100):
+    """
+    计数排序，是一个不稳定排序，此设计中data的数据范围0-100
+    一般用于数据范围比较小的排序，数据内容固定的排序
+    1. 划定一个以数据范围生成的列表
+    2. 遍历需要排序的数据，插入到对应的数据范围列表中
+    3. 从数据列表中拿出数据
+    :param data:
+    :param count_start: 计数排序的起始
+    :param count_end: 计数排序的截止
+    :return:
+    """
+    count_map = {}
+    for i in data:
+        if not isinstance(i, int):
+            continue
+        if i < count_start or i > count_end:
+            continue
+        if i in count_map:
+            count_map[i].append(i)
+        else:
+            count_map[i] = [i, ]
+
+    ret_data = []
+    for i in range(count_start, count_end+1):
+        row = count_map.get(i)
+        if row:
+            ret_data.extend(row)
+    return ret_data
+
+
+def radix_sort(data):
+    """
+    基数排序
+    1. 基数排序一般用于对整数数据进行排序
+    2. 从个位起对每一个数据进行排序，再到十位、百位、千位进行排序
+    3. 按照每一位排序的结果，从对应的数据栈内取出数据，取出数据的顺序就是有序的排序
+    4. 考虑到要对负数进行排序，因此扩容一倍，0-9表示复数，10-19表示正数，整个数据+10
+    :param data:
+    :return:
+    """
+    # 构建基数map
+    minus_base_map = {}  # 负数
+    num_base_map = {}  # 正数
+    for i in range(10):
+        minus_base_map[i] = []
+        num_base_map[i+10] = []
+
+    base_num = 10  # 从10位开始进行除法
+    valid_data = data[:]
+    ret_data = []
+    while valid_data:
+        tmp_valid_data = []  # 初始化可用数据列表
+        tmp_num_map = copy.deepcopy(num_base_map)
+        tmp_minus_map = copy.deepcopy(minus_base_map)
+        for row in valid_data:
+            index = (abs(row) // base_num) % 10
+            if abs(row) > base_num:
+                tmp_valid_data.append(row)
+
+            if row > 0:  # 正数放进正数的基数队列
+                tmp_num_map[index+10].append(row)
+            else:  # 负数放进负数的基数队列
+                tmp_minus_map[index].append(row)
+
+        base_num *= 10
+        valid_data = tmp_valid_data[:]
+        ret_data = []
+        for i in range(20):
+            if i < 10:
+                ret_data.extend(tmp_minus_map[-1 * i])
+            else:
+                ret_data.extend(tmp_num_map[i])
+    return ret_data
+
+
+def bucket_sort(data):
+    """
+    桶排序
+    :param data:
+    :return:
+    """
+
+
 if __name__ == '__main__':
-    ll = [6, 1, 5, 9, 9, 7, 2, 3, 5, 4, 1, 5, 3]
+    ll = [1, 6, 7, -8, 4, -7, 45, 14, 24, -57, 89, -124, 101, 245, -784, 1024, 1000, 2222, -1001, 12, 524, 500, 100]
     print(ll)
-    print(heap_sort(ll))
+    print(radix_sort(ll))
+

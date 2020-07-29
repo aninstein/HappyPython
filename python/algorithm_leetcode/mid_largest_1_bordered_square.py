@@ -63,8 +63,13 @@ class Solution(object):
                             r_d_j += 1
                             continue
 
+                        if not all(grid[i][j:r_d_j]) or not all(grid[r_d_i][j:r_d_j]):
+                            r_d_i += 1
+                            r_d_j += 1
+                            continue
+
                         for p in range(now):
-                            if not all((grid[i][j+p], grid[i+p][j], grid[r_d_i][j+p], grid[i+p][r_d_j])):
+                            if not all((grid[i+p][j], grid[i+p][r_d_j])):
                                 break
                         else:
                             max_grid = now if now > max_grid else max_grid

@@ -37,7 +37,7 @@ class Solution(object):
     #     :type x: int
     #     :rtype: bool
     #     """
-    #     if x < 0:
+    #     if x < 0:··
     #         return False
     #     num_str = str(x)
     #     num_len = len(num_str)

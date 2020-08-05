@@ -14,8 +14,6 @@ def bag_0and1(data):
     :param data:
     :return:
     """
-    things_number = 10
-    data = create_random_bag_data(things_number)
     print(data)
     total_weight = data.get("total_weight")
     items = data.get("items")
@@ -26,6 +24,17 @@ def bag_0and1(data):
 
 
 def _one_dim_function(data, number, total_weight):
+    """
+    状态转移方程：
+    i：表示第几个物品
+    k：表示重量几许
+    dp[k] = max(value[i]+dp[k-weight[i]], dp[k])
+    :param data:
+    :param number:
+    :param total_weight:
+    :return:
+    """
+    # 由于数据从1开始计算因此+1
     row = number + 1
     col = total_weight + 1
     total_val = np.array([0] * col)
@@ -33,6 +42,10 @@ def _one_dim_function(data, number, total_weight):
         if i == len(data):
             break
         item = data[i]
+        # 这个地方需要是从后面到前面，因为如果从前面到后面的话，会把低层级的j给覆盖掉，
+        # https://www.cnblogs.com/kkbill/p/12081172.html
+        # 其实是由于状态转移方程为：dp[k](新值) = max(value[i]+dp[k-weight[i]](旧值), dp[k](旧值))
+        # 这个k-weight[i]，如果从前往后数的话，这个值就会被上个值更新为新的值而出现错误
         for j in range(col-1, -1, -1):
             value = item.get("value")
             weight = item.get("weight")
@@ -43,6 +56,17 @@ def _one_dim_function(data, number, total_weight):
 
 
 def _two_dim_function(data, number, total_weight):
+    """
+    状态转移方程
+    i: 表示第几个物品
+    j: 表示背包重量
+    dp[i][j] = max(value[i]+dp[i-1][j-weight[i]], dp[i-1][j])
+    :param data:
+    :param number:
+    :param total_weight:
+    :return:
+    """
+    # 由于数据从1开始计算因此+1
     row = number + 1
     col = total_weight + 1
     total_val = np.array([0] * (row * col)).reshape(row, col)
@@ -110,4 +134,15 @@ def create_random_bag_data(things_num, bag_type="01", is_random=True):
 
 
 if __name__ == '__main__':
-    bag_0and1("aa")
+    things_number = 10
+    data = create_random_bag_data(things_number, bag_type="01")
+    print("bag_0and1 >>>>>>>>>>>>")
+    bag_0and1(data)
+
+    print("bag_complete >>>>>>>>>>>>")
+    data = create_random_bag_data(things_number, bag_type="complete")
+    bag_complete(data)
+
+    print("bag_multiple >>>>>>>>>>>>")
+    data = create_random_bag_data(things_number, bag_type="multiple")
+    bag_multiple(data)

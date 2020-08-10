@@ -115,8 +115,8 @@ def shell_sort(data):
         for i in range(step, data_len):
             temp = data[i]
             j = i - step
-            while j >= 0 and data[j] > temp:
-                data[j + step] = data[j]
+            while j >= 0  and data[j] > temp:
+                data[j + step] = data[j]  # 第一次j + step就是i啊
                 j -= step
             data[j+step] = temp
         step //= 2

@@ -4,7 +4,8 @@ import "fmt"
 
 func main() {
     data := []int{1, 5, 7, 1, 8, 9, 4, 2, 3, -1, 14, 41, -22}
-    fmt.Println(fastSort1(data))
+    fastSort2(data, 0, len(data)-1)
+    fmt.Println(data)
 }
 
 
@@ -116,4 +117,34 @@ func fastSort1(data []int) []int {
     }
     leftList := append(fastSort1(left), mid...)
     return append(leftList, fastSort1(right)...)
+}
+
+
+// 快速排序2
+// 类似java和c那种，数组长度不能改变，没有类似python的list或者go的切片那样的数据类型
+// 这种情况下就是充分的使用数组之间数据交换的方式进行数据排序
+// 这种方法主要是不断的寻找最佳标定位置的方法
+func fastSort2(data []int, left, right int) {
+    if left < right{
+        pos := pattion(data, left, right)
+        fastSort2(data, left,  pos-1)
+        fastSort2(data, pos+1,  right)
+    }
+}
+
+func pattion(data []int, left, right int) int {
+    index := data[right]  // 选用最后一个值作为标志
+    i := left - 1
+    for j := left; j < right; j++ {
+        if index > data[j] {
+            i ++
+            swap(data, i, j)
+        }
+    }
+    swap(data, i+1, right)
+    return i+1
+}
+
+func swap(data []int, i, j int) {
+    data[i], data[j] = data[j], data[i]
 }

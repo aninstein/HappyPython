@@ -47,6 +47,13 @@ class Solution(object):
     #     return True
 
 
+def append_list(ret):
+    ret.append("1111")
+
+
 if __name__ == '__main__':
-    print(Solution().isPalindrome(1513351))
+    # print(Solution().isPalindrome(1513351))
+    ll = ["1", "2"]
+    append_list(ll)
+    print(ll)
 

@@ -1,13 +1,5 @@
 package main
 
-import "fmt"
-
-func main() {
-    data := []int{1, 5, 7, 1, 8, 9, 4, 2, 3, -1, 14, 41, -22}
-    fastSort2(data, 0, len(data)-1)
-    fmt.Println(data)
-}
-
 
 func bubbleSort(data []int) []int{
     if data == nil || len(data) == 0 {
@@ -126,25 +118,82 @@ func fastSort1(data []int) []int {
 // 这种方法主要是不断的寻找最佳标定位置的方法
 func fastSort2(data []int, left, right int) {
     if left < right{
-        pos := pattion(data, left, right)
+        pos := position(data, left, right)
         fastSort2(data, left,  pos-1)
         fastSort2(data, pos+1,  right)
     }
 }
 
-func pattion(data []int, left, right int) int {
-    index := data[right]  // 选用最后一个值作为标志
-    i := left - 1
+func position(data []int, left, right int) int {
+    index := data[right]  // 选用最后一个值作为主元
+    i := left - 1  // 初始化标志位为第一个，之所以要减1，是因为传入参数是+1的
     for j := left; j < right; j++ {
         if index > data[j] {
-            i ++
-            swap(data, i, j)
+            i++  // 标志位往前移动
+            swap(data, i, j)  // 因为data[j]是小于index的，所以放到左边，且标志位往前移动
         }
     }
-    swap(data, i+1, right)
+    swap(data, i+1, right)  // 求得到当前的标志位与主元交换完成
     return i+1
 }
+
+func mergeSort(data []int) []int {
+    if data == nil {
+        return []int{}
+    }
+    dataLen := len(data)
+    if dataLen == 0{
+        return []int{}
+    } else if dataLen == 1{
+        return data
+    }
+
+
+    haft := int(dataLen / 2)
+    left := mergeSort(data[:haft])
+    right := mergeSort(data[haft:])
+    return merge(left, right)
+}
+
+func merge(left, right []int) []int {
+    leftLen := len(left)
+    rightLen := len(right)
+    var newList []int
+    i := 0
+    j := 0
+    for i < leftLen && j < rightLen {
+        if left[i] < right[j] {
+            newList = append(newList, left[i])
+            i++
+        }else {
+            newList = append(newList, right[j])
+            j++
+        }
+    }
+    newList = append(newList, left[i:]...)
+    newList = append(newList, right[j:]...)
+    return newList
+}
+
+
+// 公用函数
+func min(a, b int) int {
+    if a < b {
+        return a
+    }
+    return b
+}
+
+
+func max(a, b int) int {
+    if a > b {
+        return a
+    }
+    return b
+}
+
 
 func swap(data []int, i, j int) {
     data[i], data[j] = data[j], data[i]
 }
+

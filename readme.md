@@ -1,1 +1,1 @@
-# happy code happy code
+# 学习python的代码，包括leetcode刷题，python功能验证，笔试面试题等

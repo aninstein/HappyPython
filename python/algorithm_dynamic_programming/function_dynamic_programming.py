@@ -20,7 +20,6 @@ def bag_0and1(data):
     number = data.get("things_num")
     max_value = _two_dim_function(items, number, total_weight)
     print(max_value)
-    pass
 
 
 def _one_dim_function(data, number, total_weight):
@@ -37,22 +36,20 @@ def _one_dim_function(data, number, total_weight):
     # 由于数据从1开始计算因此+1
     row = number + 1
     col = total_weight + 1
-    total_val = np.array([0] * col)
+    dp = np.array([0] * col)
     for i in range(1, row):
         if i == len(data):
             break
         item = data[i]
         # 这个地方需要是从后面到前面，因为如果从前面到后面的话，会把低层级的j给覆盖掉，
-        # https://www.cnblogs.com/kkbill/p/12081172.html
+        # https://www.cnblogs.com/qie-wei/p/10160169.html
         # 其实是由于状态转移方程为：dp[k](新值) = max(value[i]+dp[k-weight[i]](旧值), dp[k](旧值))
         # 这个k-weight[i]，如果从前往后数的话，这个值就会被上个值更新为新的值而出现错误
-        for j in range(col-1, -1, -1):
-            value = item.get("value")
-            weight = item.get("weight")
-            if weight <= j:
-                input_val = total_val[j - weight] + value
-                total_val[j] = max(input_val, total_val[j])
-    return total_val[total_weight - 1]
+        v = item.get("value")
+        w = item.get("weight")
+        for j in range(col, w, -1):
+            dp[j] = max(dp[j - w] + v, dp[j])
+    return dp[total_weight]
 
 
 def _two_dim_function(data, number, total_weight):
@@ -69,21 +66,22 @@ def _two_dim_function(data, number, total_weight):
     # 由于数据从1开始计算因此+1
     row = number + 1
     col = total_weight + 1
-    total_val = np.array([0] * (row * col)).reshape(row, col)
+    # dp = [[0] * col for _ in range(row)]
+    dp = np.array([0] * (row * col)).reshape(row, col)
     for i in range(1, row):
         if i == len(data):
             break
         item = data[i]
+        v = item.get("value")
+        w = item.get("weight")
         for j in range(1, col):
-            value = item.get("value")
-            weight = item.get("weight")
-            if weight > j:
-                total_val[i][j] = total_val[i-1][j]
+            if w > j:
+                dp[i][j] = dp[i-1][j]
             else:
-                input_val = total_val[i-1][j-weight] + value
-                noput_val = total_val[i-1][j]
-                total_val[i][j] = max(input_val, noput_val)
-    return total_val[number-1][total_weight]
+                input_val = dp[i-1][j-w] + v
+                noput_val = dp[i-1][j]
+                dp[i][j] = max(input_val, noput_val)
+    return dp[number-1][total_weight]
 
 
 def bag_complete(data):
@@ -122,10 +120,10 @@ def create_random_bag_data(things_num, bag_type="01", is_random=True):
             number = 1
         items.append({
             "number": number,
-            "weight": random.randint(1, 100),
+            "weight": random.randint(1, 80),
             "value": random.randint(1, 1000)
         })
-    total_weight = random.randint(150, 350)
+    total_weight = random.randint(250, 450)
     return {
         "items": items,
         "total_weight": total_weight,
@@ -136,13 +134,12 @@ def create_random_bag_data(things_num, bag_type="01", is_random=True):
 if __name__ == '__main__':
     things_number = 10
     data = create_random_bag_data(things_number, bag_type="01")
-    print("bag_0and1 >>>>>>>>>>>>")
     bag_0and1(data)
 
-    print("bag_complete >>>>>>>>>>>>")
-    data = create_random_bag_data(things_number, bag_type="complete")
-    bag_complete(data)
-
-    print("bag_multiple >>>>>>>>>>>>")
-    data = create_random_bag_data(things_number, bag_type="multiple")
-    bag_multiple(data)
+    # print("bag_complete >>>>>>>>>>>>")
+    # data = create_random_bag_data(things_number, bag_type="complete")
+    # bag_complete(data)
+    #
+    # print("bag_multiple >>>>>>>>>>>>")
+    # data = create_random_bag_data(things_number, bag_type="multiple")
+    # bag_multiple(data)

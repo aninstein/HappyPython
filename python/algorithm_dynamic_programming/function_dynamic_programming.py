@@ -92,7 +92,34 @@ def bag_complete(data):
     :param data:
     :return:
     """
-    pass
+    print(data)
+    total_weight = data.get("total_weight")
+    items = data.get("items")
+    number = data.get("things_num")
+    print(_complete_two_dim_k_function(items, number, total_weight))
+
+
+def _complete_two_dim_k_function(data, number, total_weight):
+    # 由于数据从1开始计算因此+1
+    row = number + 1
+    col = total_weight + 1
+    # dp = [[0] * col for _ in range(row)]
+    dp = np.array([0] * (row * col)).reshape(row, col)
+    for i in range(1, row):
+        if i == len(data):
+            break
+        item = data[i]
+        v = item.get("value")
+        w = item.get("weight")
+        for j in range(1, col):
+            for k in range(1, j):
+                if j > k * w:
+                    input_val = dp[i - 1][j - k*w] + k*v
+                    noput_val = dp[i - 1][j]
+                    dp[i][j] = max(input_val, noput_val)
+                else:
+                    dp[i][j] = dp[i - 1][j]
+    return dp[number-1][total_weight]
 
 
 def bag_multiple(data):
@@ -136,9 +163,9 @@ if __name__ == '__main__':
     data = create_random_bag_data(things_number, bag_type="01")
     bag_0and1(data)
 
-    # print("bag_complete >>>>>>>>>>>>")
-    # data = create_random_bag_data(things_number, bag_type="complete")
-    # bag_complete(data)
+    print("bag_complete >>>>>>>>>>>>")
+    data = create_random_bag_data(things_number, bag_type="complete")
+    bag_complete(data)
     #
     # print("bag_multiple >>>>>>>>>>>>")
     # data = create_random_bag_data(things_number, bag_type="multiple")

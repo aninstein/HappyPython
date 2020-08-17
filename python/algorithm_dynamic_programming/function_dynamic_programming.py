@@ -76,12 +76,12 @@ def _two_dim_function(data, number, total_weight):
         w = item.get("weight")
         for j in range(1, col):
             if w > j:
-                dp[i][j] = dp[i-1][j]
+                dp[i][j] = dp[i - 1][j]
             else:
-                input_val = dp[i-1][j-w] + v
-                noput_val = dp[i-1][j]
+                input_val = dp[i - 1][j - w] + v
+                noput_val = dp[i - 1][j]
                 dp[i][j] = max(input_val, noput_val)
-    return dp[number-1][total_weight]
+    return dp[number - 1][total_weight]
 
 
 def bag_complete(data):
@@ -100,6 +100,14 @@ def bag_complete(data):
 
 
 def _complete_two_dim_k_function(data, number, total_weight):
+    """
+    状态转移方程：
+    dp[i][j] = max(dp[i-1][j-k*w[i]] + k*v[i], dp[i-1][j])
+    :param data:
+    :param number:
+    :param total_weight:
+    :return:
+    """
     # 由于数据从1开始计算因此+1
     row = number + 1
     col = total_weight + 1
@@ -112,14 +120,45 @@ def _complete_two_dim_k_function(data, number, total_weight):
         v = item.get("value")
         w = item.get("weight")
         for j in range(1, col):
-            for k in range(1, j):
-                if j > k * w:
-                    input_val = dp[i - 1][j - k*w] + k*v
+            for k in range(w, j + 1):
+                if j >= k * w:
+                    input_val = dp[i - 1][j - k * w] + k * v
                     noput_val = dp[i - 1][j]
                     dp[i][j] = max(input_val, noput_val)
                 else:
                     dp[i][j] = dp[i - 1][j]
-    return dp[number-1][total_weight]
+                    break  # 如果k * w >= j了这个循环就没必要继续了
+    return dp[number - 1][total_weight]
+
+
+def _complete_one_dim_function(data, number, total_weight):
+    """
+    状态转移方程：
+    i：表示第几个物品
+    k：表示重量几许
+    dp[k] = max(value[i]+dp[k-weight[i]], dp[k])
+    :param data:
+    :param number:
+    :param total_weight:
+    :return:
+    """
+    # 由于数据从1开始计算因此+1
+    row = number + 1
+    col = total_weight + 1
+    dp = np.array([0] * col)
+    for i in range(1, row):
+        if i == len(data):
+            break
+        item = data[i]
+        # 这个地方需要是从后面到前面，因为如果从前面到后面的话，会把低层级的j给覆盖掉，
+        # https://www.cnblogs.com/qie-wei/p/10160169.html
+        # 其实是由于状态转移方程为：dp[k](新值) = max(value[i]+dp[k-weight[i]](旧值), dp[k](旧值))
+        # 这个k-weight[i]，如果从前往后数的话，这个值就会被上个值更新为新的值而出现错误
+        v = item.get("value")
+        w = item.get("weight")
+        for j in range(w, col):
+            dp[j] = max(dp[j - w] + v, dp[j])
+    return dp[total_weight]
 
 
 def bag_multiple(data):
@@ -151,10 +190,55 @@ def create_random_bag_data(things_num, bag_type="01", is_random=True):
             "value": random.randint(1, 1000)
         })
     total_weight = random.randint(250, 450)
+    # return {
+    #     "items": items,
+    #     "total_weight": total_weight,
+    #     "things_num": things_num
+    # }
     return {
-        "items": items,
-        "total_weight": total_weight,
-        "things_num": things_num
+        "things_num": 10,
+        "items": [{
+            "value": 86,
+            "number": 999999,
+            "weight": 28
+        }, {
+            "value": 553,
+            "number": 999999,
+            "weight": 7
+        }, {
+            "value": 27,
+            "number": 999999,
+            "weight": 29
+        }, {
+            "value": 246,
+            "number": 999999,
+            "weight": 33
+        }, {
+            "value": 55,
+            "number": 999999,
+            "weight": 62
+        }, {
+            "value": 403,
+            "number": 999999,
+            "weight": 77
+        }, {
+            "value": 234,
+            "number": 999999,
+            "weight": 19
+        }, {
+            "value": 216,
+            "number": 999999,
+            "weight": 30
+        }, {
+            "value": 481,
+            "number": 999999,
+            "weight": 1
+        }, {
+            "value": 387,
+            "number": 999999,
+            "weight": 42
+        }],
+        "total_weight": 331
     }
 
 

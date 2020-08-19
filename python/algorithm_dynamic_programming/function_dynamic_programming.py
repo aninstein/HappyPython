@@ -6,6 +6,78 @@ import random
 import numpy as np
 
 
+def create_random_bag_data(things_num, bag_type="01", is_random=True):
+    if not is_random:
+        return {}
+
+    if bag_type == "multiple":
+        return {
+	"things_num": 10,
+	"items": [{
+		"value": 7,
+		"number": 5,
+		"weight": 1
+	}, {
+		"value": 13,
+		"number": 2,
+		"weight": 4
+	}, {
+		"value": 18,
+		"number": 1,
+		"weight": 1
+	}, {
+		"value": 5,
+		"number": 1,
+		"weight": 7
+	}, {
+		"value": 20,
+		"number": 3,
+		"weight": 10
+	}, {
+		"value": 19,
+		"number": 1,
+		"weight": 9
+	}, {
+		"value": 6,
+		"number": 5,
+		"weight": 10
+	}, {
+		"value": 12,
+		"number": 4,
+		"weight": 9
+	}, {
+		"value": 8,
+		"number": 1,
+		"weight": 3
+	}, {
+		"value": 10,
+		"number": 4,
+		"weight": 6
+	}],
+	"total_weight": 37
+}
+
+    items = []
+    for i in range(things_num):
+        if bag_type == "multiple":
+            number = random.randint(1, 5)
+        elif bag_type == "complete":
+            number = 999999
+        else:
+            number = 1
+        items.append({
+            "number": number,
+            "weight": random.randint(1, 10),
+            "value": random.randint(1, 20)
+        })
+    total_weight = random.randint(25, 45)
+    return {
+        "items": items,
+        "total_weight": total_weight,
+        "things_num": things_num
+    }
+
+
 def bag_0and1(data):
     """
     01背包问题
@@ -120,7 +192,7 @@ def _complete_two_dim_k_function(data, number, total_weight):
         v = item.get("value")
         w = item.get("weight")
         for j in range(1, col):
-            for k in range(w, j + 1):
+            for k in range(1, j + 1):
                 if j >= k * w:
                     input_val = dp[i - 1][j - k * w] + k * v
                     noput_val = dp[i - 1][j]
@@ -199,77 +271,44 @@ def bag_multiple(data):
     :param data:
     :return:
     """
-    pass
+    print(data)
+    total_weight = data.get("total_weight")
+    items = data.get("items")
+    number = data.get("things_num")
+    print(_multiple_two_dim_k_function(items, number, total_weight))
 
 
-def create_random_bag_data(things_num, bag_type="01", is_random=True):
-    if not is_random:
-        return {}
-
-    items = []
-    for i in range(things_num):
-        if bag_type == "multiple":
-            number = random.randint(1, 50)
-        elif bag_type == "complete":
-            number = 999999
-        else:
-            number = 1
-        items.append({
-            "number": number,
-            "weight": random.randint(1, 80),
-            "value": random.randint(1, 1000)
-        })
-    total_weight = random.randint(250, 450)
-    # return {
-    #     "items": items,
-    #     "total_weight": total_weight,
-    #     "things_num": things_num
-    # }
-    return {
-        "things_num": 10,
-        "items": [{
-            "value": 86,
-            "number": 999999,
-            "weight": 28
-        }, {
-            "value": 553,
-            "number": 999999,
-            "weight": 7
-        }, {
-            "value": 27,
-            "number": 999999,
-            "weight": 29
-        }, {
-            "value": 246,
-            "number": 999999,
-            "weight": 33
-        }, {
-            "value": 55,
-            "number": 999999,
-            "weight": 62
-        }, {
-            "value": 403,
-            "number": 999999,
-            "weight": 77
-        }, {
-            "value": 234,
-            "number": 999999,
-            "weight": 19
-        }, {
-            "value": 216,
-            "number": 999999,
-            "weight": 30
-        }, {
-            "value": 481,
-            "number": 999999,
-            "weight": 1
-        }, {
-            "value": 387,
-            "number": 999999,
-            "weight": 42
-        }],
-        "total_weight": 331
-    }
+def _multiple_two_dim_k_function(data, number, total_weight):
+    """
+    状态转移方程：
+    dp[i][j] = max(dp[i-1][j-k*w[i]] + k*v[i], dp[i-1][j]) (0<k<=num[i])
+    :param data:
+    :param number:
+    :param total_weight:
+    :return:
+    """
+    # 由于数据从1开始计算因此+1
+    row = number + 1
+    col = total_weight + 1
+    # dp = [[0] * col for _ in range(row)]
+    dp = np.array([0] * (row * col)).reshape(row, col)
+    for i in range(1, row):
+        if i == len(data):
+            break
+        item = data[i]
+        v = item.get("value")
+        w = item.get("weight")
+        num = item.get("number")
+        for j in range(1, col):
+            for k in range(1, num + 1):
+                if j >= k * w:
+                    input_val = dp[i - 1][j - k * w] + k * v
+                    noput_val = dp[i - 1][j]
+                    dp[i][j] = max(input_val, noput_val)
+                else:
+                    dp[i][j] = dp[i - 1][j]
+                    break  # 如果k * w >= j了这个循环就没必要继续了
+    return dp[number - 1][total_weight]
 
 
 if __name__ == '__main__':
@@ -280,7 +319,7 @@ if __name__ == '__main__':
     print("bag_complete >>>>>>>>>>>>")
     data = create_random_bag_data(things_number, bag_type="complete")
     bag_complete(data)
-    #
-    # print("bag_multiple >>>>>>>>>>>>")
-    # data = create_random_bag_data(things_number, bag_type="multiple")
-    # bag_multiple(data)
+
+    print("bag_multiple >>>>>>>>>>>>")
+    data = create_random_bag_data(things_number, bag_type="multiple")
+    bag_multiple(data)

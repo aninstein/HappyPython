@@ -311,6 +311,35 @@ def _multiple_two_dim_k_function(data, number, total_weight):
     return dp[number - 1][total_weight]
 
 
+def _multiple_one_dim_k_function(data, number, total_weight):
+    """
+    状态转移方程：
+    空间复杂度优化，一维数组实现法
+    dp[j] = max(dp[j-k*w[i]] + k*v[i], dp[j]) (0 < k && k * w[i] <= j && k <= num[i])
+    :param data:
+    :param number:
+    :param total_weight:
+    :return:
+    """
+    # 由于数据从1开始计算因此+1
+    row = number + 1
+    col = total_weight + 1
+    # dp = [[0] * col for _ in range(row)]
+    dp = np.array([0] * col)
+    for i in range(1, row):
+        if i == len(data):
+            break
+        item = data[i]
+        v = item.get("value")
+        w = item.get("weight")
+        num = item.get("number")
+        for j in range(col, w, -1):
+            for k in range(1, num + 1):
+                if j >= k * w:
+                    dp[j] = max(dp[j - k * w] + k * v, dp[j])
+    return dp[total_weight]
+
+
 if __name__ == '__main__':
     things_number = 10
     data = create_random_bag_data(things_number, bag_type="01")

@@ -12,50 +12,60 @@ def create_random_bag_data(things_num, bag_type="01", is_random=True):
 
     if bag_type == "multiple":
         return {
-	"things_num": 10,
-	"items": [{
-		"value": 7,
-		"number": 5,
-		"weight": 1
-	}, {
-		"value": 13,
-		"number": 2,
-		"weight": 4
-	}, {
-		"value": 18,
-		"number": 1,
-		"weight": 1
-	}, {
-		"value": 5,
-		"number": 1,
-		"weight": 7
-	}, {
-		"value": 20,
-		"number": 3,
-		"weight": 10
-	}, {
-		"value": 19,
-		"number": 1,
-		"weight": 9
-	}, {
-		"value": 6,
-		"number": 5,
-		"weight": 10
-	}, {
-		"value": 12,
-		"number": 4,
-		"weight": 9
-	}, {
-		"value": 8,
-		"number": 1,
-		"weight": 3
-	}, {
-		"value": 10,
-		"number": 4,
-		"weight": 6
-	}],
-	"total_weight": 37
-}
+            "items": [{
+                "number": 5,
+                "weight": 5,
+                "value": 1,
+                "name": 0
+            }, {
+                "number": 5,
+                "weight": 9,
+                "value": 18,
+                "name": 1
+            }, {
+                "number": 4,
+                "weight": 6,
+                "value": 12,
+                "name": 2
+            }, {
+                "number": 3,
+                "weight": 8,
+                "value": 7,
+                "name": 3
+            }, {
+                "number": 4,
+                "weight": 7,
+                "value": 14,
+                "name": 4
+            }, {
+                "number": 2,
+                "weight": 7,
+                "value": 7,
+                "name": 5
+            }, {
+                "number": 5,
+                "weight": 2,
+                "value": 12,
+                "name": 6
+            }, {
+                "number": 2,
+                "weight": 9,
+                "value": 14,
+                "name": 7
+            }, {
+                "number": 2,
+                "weight": 3,
+                "value": 2,
+                "name": 8
+            }, {
+                "number": 5,
+                "weight": 10,
+                "value": 15,
+                "name": 9
+            }],
+            "total_weight": 36,
+            "things_num": 10
+        }
 
     items = []
     for i in range(things_num):
@@ -68,7 +78,8 @@ def create_random_bag_data(things_num, bag_type="01", is_random=True):
         items.append({
             "number": number,
             "weight": random.randint(1, 10),
-            "value": random.randint(1, 20)
+            "value": random.randint(1, 20),
+            "name": i
         })
     total_weight = random.randint(25, 45)
     return {
@@ -90,8 +101,10 @@ def bag_0and1(data):
     total_weight = data.get("total_weight")
     items = data.get("items")
     number = data.get("things_num")
-    max_value = _two_dim_function(items, number, total_weight)
-    print(max_value)
+    print("_two_dim_function: ")
+    print(_two_dim_function(items, number, total_weight))
+    print("_one_dim_function: ")
+    print(_one_dim_function(items, number, total_weight))
 
 
 def _one_dim_function(data, number, total_weight):
@@ -119,7 +132,7 @@ def _one_dim_function(data, number, total_weight):
         # 这个k-weight[i]，如果从前往后数的话，这个值就会被上个值更新为新的值而出现错误
         v = item.get("value")
         w = item.get("weight")
-        for j in range(col, w, -1):
+        for j in range(col - 1, w - 1, -1):
             dp[j] = max(dp[j - w] + v, dp[j])
     return dp[total_weight]
 
@@ -146,13 +159,13 @@ def _two_dim_function(data, number, total_weight):
         item = data[i]
         v = item.get("value")
         w = item.get("weight")
-        for j in range(1, col):
-            if w > j:
-                dp[i][j] = dp[i - 1][j]
-            else:
+        for j in range(0, col):
+            if j >= w:
                 input_val = dp[i - 1][j - w] + v
                 noput_val = dp[i - 1][j]
                 dp[i][j] = max(input_val, noput_val)
+            else:
+                dp[i][j] = dp[i - 1][j]
     return dp[number - 1][total_weight]
 
 
@@ -168,7 +181,12 @@ def bag_complete(data):
     total_weight = data.get("total_weight")
     items = data.get("items")
     number = data.get("things_num")
+    print("_complete_two_dim_k_function: ")
+    print(_complete_two_dim_k_function(items, number, total_weight))
+    print("_complete_two_dim_function: ")
     print(_complete_two_dim_function(items, number, total_weight))
+    print("_complete_one_dim_function: ")
+    print(_complete_one_dim_function(items, number, total_weight))
 
 
 def _complete_two_dim_k_function(data, number, total_weight):
@@ -275,13 +293,16 @@ def bag_multiple(data):
     total_weight = data.get("total_weight")
     items = data.get("items")
     number = data.get("things_num")
+    print("_multiple_two_dim_k_function: ")
     print(_multiple_two_dim_k_function(items, number, total_weight))
+    print("_multiple_one_dim_k_function: ")
+    print(_multiple_one_dim_k_function(items, number, total_weight))
 
 
 def _multiple_two_dim_k_function(data, number, total_weight):
     """
     状态转移方程：
-    dp[i][j] = max(dp[i-1][j-k*w[i]] + k*v[i], dp[i-1][j]) (0<k<=num[i])
+    dp[i][j] = max(dp[i-1][j-k*w[i]] + k*v[i], dp[i-1][j]) (0< k && k * w[i] <= j && k <=num[i])
     :param data:
     :param number:
     :param total_weight:
@@ -292,6 +313,7 @@ def _multiple_two_dim_k_function(data, number, total_weight):
     col = total_weight + 1
     # dp = [[0] * col for _ in range(row)]
     dp = np.array([0] * (row * col)).reshape(row, col)
+    select = []
     for i in range(1, row):
         if i == len(data):
             break
@@ -299,15 +321,18 @@ def _multiple_two_dim_k_function(data, number, total_weight):
         v = item.get("value")
         w = item.get("weight")
         num = item.get("number")
-        for j in range(1, col):
+        for j in range(w, col):
             for k in range(1, num + 1):
                 if j >= k * w:
                     input_val = dp[i - 1][j - k * w] + k * v
                     noput_val = dp[i - 1][j]
+                    if input_val > noput_val:
+                        select.append(i)
                     dp[i][j] = max(input_val, noput_val)
                 else:
                     dp[i][j] = dp[i - 1][j]
-                    break  # 如果k * w >= j了这个循环就没必要继续了
+                    break
+    print("select: ", select)
     return dp[number - 1][total_weight]
 
 
@@ -326,6 +351,7 @@ def _multiple_one_dim_k_function(data, number, total_weight):
     col = total_weight + 1
     # dp = [[0] * col for _ in range(row)]
     dp = np.array([0] * col)
+    select = []
     for i in range(1, row):
         if i == len(data):
             break
@@ -333,22 +359,45 @@ def _multiple_one_dim_k_function(data, number, total_weight):
         v = item.get("value")
         w = item.get("weight")
         num = item.get("number")
-        for j in range(col, w, -1):
+        for j in range(col - 1, w - 1, -1):
             for k in range(1, num + 1):
                 if j >= k * w:
+                    if (dp[j - k * w] + k * v) > dp[j]:
+                        select.append(i)
                     dp[j] = max(dp[j - k * w] + k * v, dp[j])
+                else:
+                    break
+    print("select: ", select)
     return dp[total_weight]
+
+
+def _multiple_one_dim_bin_function(data, number, total_weight):
+    """
+    多重背包算法的二进制优化
+    1. 先对数据进行整理
+    2. 转化成01背包之后再进行动态规划
+    dp[j] = max(dp[j-k*w[i]] + k*v[i], dp[j]) (0 < k && k * w[i] <= j && k <= num[i])
+    :param data:
+    :param number:
+    :param total_weight:
+    :return:
+    """
+    # 由于数据从1开始计算因此+1
+    row = number + 1
+    col = total_weight + 1
+    cnt = 0
 
 
 if __name__ == '__main__':
     things_number = 10
+    print("\nbag_01 >>>>>>>>>>>>")
     data = create_random_bag_data(things_number, bag_type="01")
     bag_0and1(data)
 
-    print("bag_complete >>>>>>>>>>>>")
+    print("\nbag_complete >>>>>>>>>>>>")
     data = create_random_bag_data(things_number, bag_type="complete")
     bag_complete(data)
 
-    print("bag_multiple >>>>>>>>>>>>")
+    print("\nbag_multiple >>>>>>>>>>>>")
     data = create_random_bag_data(things_number, bag_type="multiple")
     bag_multiple(data)

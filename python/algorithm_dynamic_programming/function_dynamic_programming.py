@@ -10,63 +10,6 @@ def create_random_bag_data(things_num, bag_type="01", is_random=True):
     if not is_random:
         return {}
 
-    if bag_type == "multiple":
-        return {
-            "items": [{
-                "number": 5,
-                "weight": 5,
-                "value": 1,
-                "name": 0
-            }, {
-                "number": 5,
-                "weight": 9,
-                "value": 18,
-                "name": 1
-            }, {
-                "number": 4,
-                "weight": 6,
-                "value": 12,
-                "name": 2
-            }, {
-                "number": 3,
-                "weight": 8,
-                "value": 7,
-                "name": 3
-            }, {
-                "number": 4,
-                "weight": 7,
-                "value": 14,
-                "name": 4
-            }, {
-                "number": 2,
-                "weight": 7,
-                "value": 7,
-                "name": 5
-            }, {
-                "number": 5,
-                "weight": 2,
-                "value": 12,
-                "name": 6
-            }, {
-                "number": 2,
-                "weight": 9,
-                "value": 14,
-                "name": 7
-            }, {
-                "number": 2,
-                "weight": 3,
-                "value": 2,
-                "name": 8
-            }, {
-                "number": 5,
-                "weight": 10,
-                "value": 15,
-                "name": 9
-            }],
-            "total_weight": 36,
-            "things_num": 10
-        }
-
     items = []
     for i in range(things_num):
         if bag_type == "multiple":
@@ -313,7 +256,6 @@ def _multiple_two_dim_k_function(data, number, total_weight):
     col = total_weight + 1
     # dp = [[0] * col for _ in range(row)]
     dp = np.array([0] * (row * col)).reshape(row, col)
-    select = []
     for i in range(1, row):
         if i == len(data):
             break
@@ -322,17 +264,11 @@ def _multiple_two_dim_k_function(data, number, total_weight):
         w = item.get("weight")
         num = item.get("number")
         for j in range(w, col):
+            dp[i][j] = dp[i - 1][j]
             for k in range(1, num + 1):
                 if j >= k * w:
                     input_val = dp[i - 1][j - k * w] + k * v
-                    noput_val = dp[i - 1][j]
-                    if input_val > noput_val:
-                        select.append(i)
-                    dp[i][j] = max(input_val, noput_val)
-                else:
-                    dp[i][j] = dp[i - 1][j]
-                    break
-    print("select: ", select)
+                    dp[i][j] = max(input_val, dp[i][j])
     return dp[number - 1][total_weight]
 
 
@@ -351,7 +287,6 @@ def _multiple_one_dim_k_function(data, number, total_weight):
     col = total_weight + 1
     # dp = [[0] * col for _ in range(row)]
     dp = np.array([0] * col)
-    select = []
     for i in range(1, row):
         if i == len(data):
             break
@@ -362,12 +297,7 @@ def _multiple_one_dim_k_function(data, number, total_weight):
         for j in range(col - 1, w - 1, -1):
             for k in range(1, num + 1):
                 if j >= k * w:
-                    if (dp[j - k * w] + k * v) > dp[j]:
-                        select.append(i)
                     dp[j] = max(dp[j - k * w] + k * v, dp[j])
-                else:
-                    break
-    print("select: ", select)
     return dp[total_weight]
 
 

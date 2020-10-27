@@ -240,6 +240,8 @@ def bag_multiple(data):
     print(_multiple_two_dim_k_function(items, number, total_weight))
     print("_multiple_one_dim_k_function: ")
     print(_multiple_one_dim_k_function(items, number, total_weight))
+    print("_multiple_one_dim_bin_function: ")
+    print(_multiple_one_dim_bin_function(items, number, total_weight))
 
 
 def _multiple_two_dim_k_function(data, number, total_weight):
@@ -312,14 +314,38 @@ def _multiple_one_dim_bin_function(data, number, total_weight):
     :param total_weight:
     :return:
     """
-    # 由于数据从1开始计算因此+1
-    row = number + 1
-    col = total_weight + 1
+    vals = [0] * 200000
+    weights = [0] * 200000
+
     cnt = 0
+    for i in range(number):
+        item = data[i]
+        num = item.get("number")
+        v = item.get("value")
+        w = item.get("weight")
+        j = 1
+        while j <= num:
+            cnt += 1
+            vals[cnt] = v * j
+            weights[cnt] = w * j
+            num -= j
+            j <<= 1
+
+        if num != 0:
+            cnt += 1
+            vals[cnt] = v * num
+            weights[cnt] = w * num
+
+    col = total_weight + 1
+    dp = [0] * col
+    for i in range(1, cnt+1):
+        for j in range(col - 1, weights[i], -1):
+            dp[j] = max(dp[j], dp[j-weights[i]] + vals[i])
+    return dp[total_weight]
 
 
 if __name__ == '__main__':
-    things_number = 10
+    things_number = 10000
     print("\nbag_01 >>>>>>>>>>>>")
     data = create_random_bag_data(things_number, bag_type="01")
     bag_0and1(data)

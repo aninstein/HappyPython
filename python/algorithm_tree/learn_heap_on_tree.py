@@ -2,6 +2,13 @@
 # -*- coding: utf-8 -*-
 
 
+class HeapNode(object):
+    def __init__(self):
+        self.val = 0
+        self.left_child = None
+        self.right_child = None
+
+
 def make_heap(data):
     """
     构建堆
@@ -14,19 +21,7 @@ def make_heap(data):
     :param data:
     :return:
     """
-    if len(data) == 1:
-        return data
-    elif len(data) == 2:
-        return [min(data), max(data)]
-    elif len(data) == 3:
-        min_data = min(data)
-        data.remove(min_data)
-        data = [min_data] + data
-
-    n = len(data)
-    for i in range(n // 2 - 1, -1, -1):
-        min_adjust_heap_down(data, i)
-    return data
+    pass
 
 
 def insert_heap(heap_data, node):
@@ -39,9 +34,7 @@ def insert_heap(heap_data, node):
     :param node:
     :return:
     """
-    data_len = len(heap_data)
-    heap_data.append(node)
-    min_adjust_heap_up(heap_data, data_len)
+    pass
 
 
 def delete_heap(heap_data):
@@ -53,49 +46,70 @@ def delete_heap(heap_data):
     :param heap_data:
     :return:
     """
-    data_len = len(heap_data)
-    heap_data[0], heap_data[data_len-1] = heap_data[data_len-1], heap_data[0]
-    heap_data.pop()  # 弹出最后一个
-    min_adjust_heap_down(heap_data, 0)
+    pass
 
 
-def min_adjust_heap_down(data, index):
+def min_adjust_heap_top2down(data, index):
     """
-    调整堆，自顶向下，用于堆化
-    :param data:
-    :param index:
+    调整堆，自顶向下，用于堆化数组
+    :param data: List[int]
+    :param index: 调整第几个节点，一般是从第0个节点开始
     :return:
     """
+    if not data:
+        return
     data_len = len(data)
-    temp = data[index]
-    child_index = 2 * index + 1
-    while child_index < data_len:
-        if child_index+1 < data_len and data[child_index + 1] < data[child_index]:
-            child_index += 1
-        if data[child_index] > temp:
+    node = data[index]
+    left_child = 2 * index + 1
+    right_child = 2 * index + 2
+    while left_child < data_len:
+
+        # 找左右节点中小的那个进行比较
+        if right_child < data_len and data[left_child] < data[right_child]:
+            min_child = right_child
+        else:
+            min_child = left_child
+
+        # 如果没有比当前节点更小的子节点，则返回
+        if data[min_child] > node:
             break
-        data[index] = data[child_index]
-        index = child_index
-        child_index = 2 * index + 1
-    data[index] = temp
+
+        # 交换父子节点
+        data[index], data[min_child] = data[min_child], data[index]
+        # index指向当前min，继续对子节点进行比较
+        index = min_child
+        left_child = 2 * index + 1
+        right_child = 2 * index + 2
+
+    # 与比较到最后一个节点进行交换
+    data[index] = node
 
 
-def min_adjust_heap_up(data, index):
+def min_adjust_heap_bottom2up(data, index):
     """
     调整堆，自底向上调整，用于插入堆
-    :param data:
-    :param index:
+    :param data: List[int]
+    :param index: 调整第几个节点，一般是最后一个节点
     :return:
     """
-    temp = data[index]
-    child_index = (index - 1) / 2
-    while index != 0 and child_index >= 0:
-        if data[child_index] < temp:
+    if not data:
+        return
+    node = data[index]
+    parent = (index - 1) // 2
+    while parent > 0:
+        # 如果父节点比当前节点小，则直接返回了
+        if data[parent] < node:
             break
-        data[index] = data[child_index]
-        index = child_index
-        child_index = (index - 1) / 2
-    data[index] = temp
+
+        # 交换父子节点
+        data[index], data[parent] = data[parent], data[index]
+
+        # 继续向上与父节点比较
+        index = parent
+        parent = (index - 1) // 2
+
+    # 与比较到最后一个节点进行交换
+    data[index] = node
 
 
 def print_heap(heap_data):

@@ -3,6 +3,7 @@
 
 import heapq
 import random
+import operator
 
 from algorithm_tree.learn_heap_on_tree import make_heap, min_adjust_heap_top2down
 
@@ -66,11 +67,54 @@ def top_k_to_priority_queue(data, k):
 def top_k_to_bucket_sort(data, k):
     """
     桶排序
+    1. 先按照当前数据范围进行分桶
+    2. 遍历数据，进行数据落桶
+    3. 计算每个桶中数据的数量，当第一个桶数据量小于K，继续到下一个桶
+    4. 直到加上某一个桶中的数据超过了K值，这时候再对这个桶中的数据进行桶排序，重复1-3的流程
+    5. 最后到桶排序的数据量到一个较小的可控范围（100左右）的时候，直接使用其他的比较排序法取得前K个
     :param data:
     :param k:
     :return:
     """
-    pass
+    if not data:
+        data = create_test_data()
+
+    data_max = max(data)
+    data_len = len(data)
+    limit_num = data_len // 100  # 一个可控范围的值
+    key_list = list(range(((data_max + 1) // k) + 1))
+    bucket = {i: [] for i in key_list}
+    for i in data:
+        key = i // k
+        bucket[key].append(i)
+
+    now_len = k
+    ret_data = []
+    for i in range(len(key_list) - 1, -1, -1):
+        now_bucket = bucket[key_list[i]]
+        bucket_len = len(now_bucket)
+        if now_len >= bucket_len:
+            ret_data.extend(now_bucket)
+            now_len -= bucket_len
+
+            if now_len == 0:
+                return ret_data
+
+            if now_len < limit_num:  # 到下一个bucket数据中去取值
+                pre = 0 if i-1 == 0 else i-1
+                now_bucket = bucket[key_list[pre]]
+                extend_data = top_k_to_bucket_sort_sort_cut(now_bucket, now_len)
+                ret_data.extend(extend_data)
+                return ret_data
+            continue
+        extend_data = top_k_to_bucket_sort_sort_cut(now_bucket, now_len)
+        ret_data.extend(extend_data)
+        return ret_data
+
+
+def top_k_to_bucket_sort_sort_cut(data, k):
+    data = sorted(data)
+    return data[len(data) - k:]
 
 
 def top_k_to_divide(data, k):
@@ -94,6 +138,19 @@ def top_k_to_bigmap(data, k):
 
 
 if __name__ == '__main__':
-    data = create_test_data(number=100)
+    data = create_test_data(number=10000)
     print(data)
-    print(top_k_to_priority_queue(data, 10))
+    heap_res = top_k_to_heap(data, 100)
+    priority_res = top_k_to_priority_queue(data, 100)
+    bucket_res = top_k_to_bucket_sort(data, 100)
+
+    heap_sort = sorted(heap_res)
+    priority_sort = sorted(priority_res)
+    bucket_sort = sorted(bucket_res)
+
+    print("heap_sort", heap_sort)
+    print("priority_sort", priority_sort)
+    print("bucket_sort", bucket_sort)
+
+    print(operator.eq(priority_sort, bucket_sort))
+

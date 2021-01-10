@@ -158,6 +158,37 @@ def fast_sort(data):
     return fast_sort(left) + same + fast_sort(right)
 
 
+def fast_sort2(data):
+    """
+    使用分治法完成快排，除了上述的用可切片的的数据类型（主要是python和golang）完成
+    还可以用寻找定位点的方式，这种方式主要适用于C语言和java，数据类型不支持切片和连接操作
+    推荐使用寻找定位点的方式，这是在原生数组上完成的数据变更，比上述的使用数组的切片和连接操作，不管是空间还是时间上都是更快的
+    :param data:
+    :return:
+    """
+    data_len = len(data)
+    fast_sort2_function(data, 0, data_len - 1)
+    return data
+
+
+def fast_sort2_function(data, left, right):
+    if left < right:
+        pos = fast_sort2_position(data, left, right)
+        fast_sort2_function(data, left, pos - 1)
+        fast_sort2_function(data, pos + 1, right)
+
+
+def fast_sort2_position(data, left, right):
+    index = data[right]
+    i = left - 1
+    for j in range(left, right):
+        if index > data[j]:
+            i += 1
+            data[i], data[j] = data[j], data[i]
+    data[i+1], data[right] = data[right], data[i+1]
+    return i+1
+
+
 def merge(left_data, right_data):
     left_index, right_index = 0, 0
 
@@ -315,5 +346,5 @@ def bucket_sort(data):
 if __name__ == '__main__':
     ll = [1, 6, 7, -8, 4, -7, 45, 14, 24, -57, 89, -124, 101, 245, -784, 1024, 1000, 2222, -1001, 12, 524, 500, 100]
     print(ll)
-    print(radix_sort(ll))
+    print(fast_sort2(ll))
 
